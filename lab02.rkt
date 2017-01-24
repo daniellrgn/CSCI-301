@@ -12,51 +12,43 @@
 ;; calculate continued fractions.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;; main function
 (define cont-frac
   (lambda (n d k)
-    (calc-denom n d k 1)))
+    (calc-denomenator n d k 1)))
 
-(define square
-  (lambda (x)
-    (* x x)))
-
+;; returns x for first iteration, then -(x^2) thereafter
 (define make-lambert-n
   (lambda (x)
     (lambda (m)
-      (if (> m 1) (- (square x)) x))))
+      (if (> m 1)
+          (- (* x x))
+          x))))
 
+;; returns term x in the sequence of odd integers
 (define lambert-d
   (lambda (x)
     (- (* 2 x) 1)))
 
-(define divis-by-3
-  (lambda (x)
-    (equal? 0 (modulo x 3))))
-
+;; returns term x of the sequence 1, 2, 1, 1, 4, 1, 1, 6,...
 (define euler-d
   (lambda (x)
-    (if (divis-by-3 (+ x 1))
+    (if (equal? 0 (modulo (+ x 1) 3))
         (* 2.0 (/ (+ x 1) 3.0))
         1.0)))
 
-(define stop?
-  (lambda (k l) (>= l k)))
-
-(define keep-going
+;; recursive iterating helper for cont-frac
+(define calc-denomenator
   (lambda (n d k l)
-     (/ (n l) (+ (d l) (calc-denom n d k (+ l 1))))))
-
-(define calc-denom
-  (lambda (n d k l)
-    (if (stop? k l)
+    (if (>= l k)
         0.0
-        (keep-going n d k l))))
+        (/ (n l) (+ (d l) (calc-denomenator n d k (+ l 1)))))))
 
 ;;;;;;;test cases below;;;;;;;;
 ;;return approximation followed by exact
 
 ;; approximate golden ratio
-(display "Approximation of golden ratio: approx, exact:")
+(display "Approximation of golden ratio:")
 (newline)
 (/ 1 (cont-frac (lambda (x) 1.0)
            (lambda (x) 1.0)
@@ -65,7 +57,7 @@
 (newline)
 
 ;; approximate e
-(display "Approximation of e: approx, exact:")
+(display "Approximation of e:")
 (newline)
 (+ 2 (cont-frac (lambda (x) 1.0)
              euler-d
@@ -74,7 +66,7 @@
 (newline)
 
 ;; approximate tan(3)
-(display "Approximation of tan(3): approx, exact:")
+(display "Approximation of tan(3):")
 (newline)
 (cont-frac (make-lambert-n 3)
              lambert-d
