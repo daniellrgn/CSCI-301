@@ -6,23 +6,36 @@
 ;; Lab #2
 ;;
 ;; Daniel Lorigan
-;; W012345678
+;; W01163069
 ;;
 ;; The purpose of this program is to 
 ;; calculate continued fractions.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (define cont-frac
   (lambda (n d k)
-  (calc-denom n d k 1)))
+    (calc-denom n d k 1.0)))
 
-(define divis-3
+(define square
   (lambda (x)
-    (equal? 1 (/ x 3))))
+    (* x x)))
+
+(define make-lambert-n
+  (lambda (x)
+    (lambda (m)
+      (if (> m 1) (- (square x)) x))))
+
+(define lambert-d
+  (lambda (x)
+    (- (* 2 x) 1)))
+
+(define divis-by-3
+  (lambda (x)
+    (equal? 1.0 (/ x 3.0))))
 
 (define euler-d
   (lambda (x)
-    (if (divis-3 (+ x 1))
-        (* 2.0 (/ (+ x 1) 3.0))
+    (if (divis-by-3 (+ x 1.0))
+        (* 2.0 (/ (+ x 1.0) 3.0))
         1.0)))
 
 (define stop?
@@ -30,7 +43,7 @@
 
 (define keep-going
   (lambda (n d k l)
-     (/ (n l) (+ (d l) (calc-denom n d k (+ l 1))))))
+     (/ (n l) (+ (d l) (calc-denom n d k (+ l 1.0))))))
 
 (define calc-denom
   (lambda (n d k l)
